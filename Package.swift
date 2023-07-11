@@ -1,6 +1,7 @@
-// swift-tools-version:5.2
+// swift-tools-version:5.7
 
 import PackageDescription
+import Darwin.C
 
 let package = Package(
 	name: "NSLogger",
@@ -23,7 +24,11 @@ let package = Package(
 			path: "Client/iOS",
 			sources: ["LoggerClient.m"],
             publicHeadersPath: "PublicHeaders",
-            cSettings: [CSetting.unsafeFlags(["-fno-objc-arc"])]
+            cSettings: [
+                .define("NSLOGGER_WAS_HERE", to: "1"),
+                .define("NSLOGGER_BUILD_USERNAME", to: String(cString: getenv("USER"))),
+                .unsafeFlags(["-fno-objc-arc"])
+            ]
 		),
         .testTarget(
             name: "NSLoggerTests",
